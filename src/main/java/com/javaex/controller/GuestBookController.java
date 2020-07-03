@@ -25,7 +25,7 @@ public class GuestBookController {
 		
 		model.addAttribute("gbList",gbList);
 		
-		return "/WEB-INF/view/addList.jsp";
+		return "addList";
 	}
 	
 	@RequestMapping("/add" )
@@ -46,7 +46,7 @@ public class GuestBookController {
 	
 		model.addAttribute("no", no);
 	
-		return "/WEB-INF/view/deleteForm.jsp";
+		return "deleteForm";
 	}
 	
 	@RequestMapping("/delete" )

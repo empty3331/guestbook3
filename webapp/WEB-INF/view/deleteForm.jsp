@@ -18,7 +18,7 @@
 	<button type = "submit">확인</button>
  </form>
  
- <a href="/guestbook3/guest/addlist">메인으로 돌아가기</a>
+ <a href="${pageContext.request.contextPath }/guest/addlist">메인으로 돌아가기</a>
 
 </body>
 </html>

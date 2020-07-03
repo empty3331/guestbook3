@@ -39,7 +39,7 @@
 			<td style = "width:50px;">${gbList.no }</td>
 			<td style = "width:200px;">${gbList.name }</td>
 			<td style = "width:200px;">${gbList.date }</td>
-			<td style = "width:50px;"> <a href = "/guestbook3/guest/deleteForm?no=${gbList.no }">삭제</a> </td>
+			<td style = "width:50px;"> <a href = "${pageContext.request.contextPath }/guest/deleteForm?no=${gbList.no }">삭제</a> </td>
 		</tr>
 		<tr>
 			<td colspan="4">${gbList.content }</td>
