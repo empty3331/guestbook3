@@ -1,60 +1,46 @@
 package com.javaex.dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.javaex.vo.GuestBookVo;
 
+@Repository
 public class GuestBookDao {
-	// 0. import java.sql.*;
-	Connection conn = null;
-	PreparedStatement pstmt = null;
-	ResultSet rs = null;
-
-	private String driver = "oracle.jdbc.driver.OracleDriver";
-	private String url = "jdbc:oracle:thin:@localhost:1521:xe";
-	private String id = "webdb";
-	private String pw = "webdb";
 	
+	@Autowired
+	private SqlSession sqlSession;
 	
-	private void getConnection() {
-		try {
-			// 1. JDBC 드라이버 (Oracle) 로딩
-			Class.forName(driver);
+	// 방명록 리스트(검색할때)
+	public List<GuestBookVo> getGuestBookList() {
+		List<GuestBookVo> guestBookList = sqlSession.selectList("guestbook.getList");
+		return guestBookList;
 
-			// 2. Connection 얻어오기
-			conn = DriverManager.getConnection(url, id, pw);
-			// System.out.println("접속성공");
-
-		} catch (ClassNotFoundException e) {
-			System.out.println("error: 드라이버 로딩 실패 - " + e);
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		}
-	}
-
-	public void close() {
-		// 5. 자원정리
-		try {
-			if (rs != null) {
-				rs.close();
-			}
-			if (pstmt != null) {
-				pstmt.close();
-			}
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		}
 	}
 	
+	// 방명록추가
+	public int guestBookInsert(GuestBookVo guestBookVo) {
+		int count = sqlSession.insert("guestbook.insert", guestBookVo);
+
+		return count;
+
+	}
+
+	// 방명록 삭제
+	public int guestBookDelete(int no, String password) {
+		Map<String, Object> gMap = new HashMap<String, Object>();
+		gMap.put("no", no);
+		gMap.put("password", password);
+		int count = sqlSession.delete("guestbook.delete", gMap );
+		return count;
+	}
+
+	/*
 	// 방명록추가
 	public int guestBookInsert(GuestBookVo guestBookVo) {
 		int count = 0;
@@ -86,64 +72,7 @@ public class GuestBookDao {
 		return count;
 	}
 	
-	// 방명록 리스트(검색안할때)
-	public List<GuestBookVo> getGuestBookList() {
-		return getGuestBookList("");
-	}
-
-	// 방명록 리스트(검색할때)
-	public List<GuestBookVo> getGuestBookList(String keword) {
-		List<GuestBookVo> guestBookList = new ArrayList<GuestBookVo>();
-
-		getConnection();
-
-		try {
-
-			// 3. SQL문 준비 / 바인딩 / 실행 --> 완성된 sql문을 가져와서 작성할것
-			String query = "";
-			query += " SELECT no, ";
-			query += "        name, ";
-			query += "        password, ";
-			query += "        content, ";
-			query += "        req_date ";
-			query += " FROM guestbook";
-
-			if (keword != "" || keword == null) {
-				query += " where name like ? ";
-				query += " or content like  ? ";
-				query += " or no like ? ";
-				pstmt = conn.prepareStatement(query); // 쿼리로 만들기
-
-				pstmt.setString(1, '%' + keword + '%'); // ?(물음표) 중 1번째, 순서중요
-				pstmt.setString(2, '%' + keword + '%'); // ?(물음표) 중 2번째, 순서중요
-				pstmt.setString(3, '%' + keword + '%'); // ?(물음표) 중 3번째, 순서중요
-			} else {
-				pstmt = conn.prepareStatement(query); // 쿼리로 만들기
-			}
-
-			rs = pstmt.executeQuery();
-
-			// 4.결과처리
-			while (rs.next()) {
-				int no = rs.getInt("no");
-				String name = rs.getString("name");
-				String password = rs.getString("password");
-				String content = rs.getString("content");
-				String date = rs.getString("req_date");
-
-				GuestBookVo guestBookVo = new GuestBookVo(no, name, password, content,date);
-				guestBookList.add(guestBookVo);
-			}
-
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		}
-
-		close();
-
-		return guestBookList;
-
-	}
+	
 	
 	// 방명록 수정
 	public int guestBookUpdate(GuestBookVo guestBookVo) {
@@ -209,5 +138,5 @@ public class GuestBookDao {
 		return count;
 	}
 	
-
+*/
 }
